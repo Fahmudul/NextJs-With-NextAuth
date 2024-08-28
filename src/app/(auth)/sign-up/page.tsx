@@ -2,10 +2,12 @@
 import axios from "axios";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function Component() {
+  const router = useRouter();
   const { data: session } = useSession();
   const [userInfo, setUserInfo] = useState({
     username: "",
@@ -15,7 +17,7 @@ export default function Component() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    // console.log(userInfo);
+    console.log(userInfo);
     if (!userInfo.username || !userInfo.email || !userInfo.password) {
       toast.error("Please fill all the fields");
     }
@@ -23,7 +25,9 @@ export default function Component() {
       const res = await axios.post(`/api/register`, userInfo);
       if (res.data.status === 200) {
         toast.success(res?.data?.message);
+
         form.reset();
+        router.push("/sign-in");
       }
     } catch (error: any) {
       throw new Error(error.message);
@@ -73,7 +77,7 @@ export default function Component() {
           />
           <div className="login-with">
             <div className="button-log">
-              <button onClick={() => signIn("google")}>
+              <button onClick={() => signIn("google")} type="button">
                 <svg
                   className="icon"
                   height="56.6934px"
@@ -91,7 +95,7 @@ export default function Component() {
               </button>
             </div>
             <div className="button-log">
-              <button onClick={() => signIn("github")}>
+              <button onClick={() => signIn("github")} type="button">
                 <svg
                   xmlnsXlink="http://www.w3.org/1999/xlink"
                   xmlns="http://www.w3.org/2000/svg"
